@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -12,7 +13,12 @@
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>"
     />
     <!-- Ethers v5 (kept to ensure compatibility with many wallets) -->
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"
+      integrity="sha512-FDcVY+g7vc5CXANbrTSg1K5qLyriCsGDYCE02Li1tXEYdNQPvLPHNE+rT2Mjei8N7fZbe0WLhw27j2SrGRpdMg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <style>
       * {
         margin: 0;
@@ -40,6 +46,7 @@
         padding: 20px 20px 40px;
       }
 
+
       .header {
         text-align: center;
         margin-bottom: 32px;
@@ -65,6 +72,7 @@
         filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
       }
 
+
       .card {
         background: rgba(255, 255, 255, 0.96);
         border-radius: 18px;
@@ -73,6 +81,7 @@
         box-shadow: 0 18px 36px rgba(0, 0, 0, 0.12);
         backdrop-filter: blur(10px);
       }
+
 
       .wallet-header {
         display: flex;
@@ -92,6 +101,7 @@
         flex-wrap: wrap;
         align-items: center;
       }
+
 
       .wallet-address,
       .network-pill {
@@ -113,6 +123,7 @@
       .wallet-address .copy:hover {
         opacity: 1;
       }
+
 
       .balance-container {
         display: flex;
@@ -147,6 +158,7 @@
         background: #f8f9fa;
         border-radius: 10px;
       }
+
 
       .btn {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -186,6 +198,7 @@
         background: #333;
       }
 
+
       .auth-type-selector {
         display: flex;
         gap: 10px;
@@ -214,6 +227,7 @@
       .auth-type-btn:hover {
         border-color: #667eea;
       }
+
 
       .grid {
         display: grid;
@@ -246,6 +260,7 @@
         box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
       }
 
+
       .upload-area {
         border: 2px dashed #667eea;
         border-radius: 15px;
@@ -264,6 +279,7 @@
         color: #666;
       }
 
+
       .slips-section {
         margin-bottom: 24px;
       }
@@ -277,6 +293,7 @@
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
         gap: 18px;
       }
+
 
       .slip {
         background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
@@ -300,6 +317,7 @@
         box-shadow: 0 14px 32px rgba(0, 0, 0, 0.2);
         z-index: 5;
       }
+
 
       .slip .tag {
         position: absolute;
@@ -366,6 +384,7 @@
         background: #f9fafb;
       }
 
+
       .delete-btn {
         position: absolute;
         top: 8px;
@@ -385,9 +404,11 @@
         color: #c00;
       }
 
+
       #fileInput {
         display: none;
       }
+
 
       .paste-panel {
         margin-top: 10px;
@@ -396,6 +417,7 @@
       .paste-panel[hidden] {
         display: none !important;
       }
+
 
       .status-message {
         position: fixed;
@@ -422,6 +444,7 @@
         background: #334155;
       }
 
+
       @keyframes slideIn {
         from {
           transform: translateX(100%);
@@ -439,6 +462,7 @@
         }
       }
 
+
       .footer {
         text-align: center;
         color: rgba(255, 255, 255, 0.85);
@@ -450,6 +474,7 @@
         color: #fff;
         text-decoration: underline;
       }
+
 
       .intro-popup {
         position: fixed;
@@ -535,6 +560,7 @@
         font-weight: 700;
       }
 
+
       .inline-help {
         font-size: 0.85em;
         color: #4b5563;
@@ -545,6 +571,39 @@
         text-decoration: underline;
         cursor: pointer;
       }
+
+
+      /* ===== Base toggle button (subtle corner toggle) ===== */
+      .base-toggle {
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: #ffffffdd;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        z-index: 1500;
+        transition: transform 0.12s ease, box-shadow 0.2s ease,
+          opacity 0.2s ease;
+      }
+      .base-toggle:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
+      }
+      .base-toggle svg {
+        width: 22px;
+        height: 22px;
+      }
+      .base-toggle.active {
+        outline: 2px solid #0052ff;
+        outline-offset: 2px;
+      }
+
 
       @media (max-width: 768px) {
         .grid {
@@ -571,6 +630,20 @@
     </style>
   </head>
   <body>
+    <!-- Base mode toggle (click to toggle between Ethereum / Base) -->
+    <button
+      id="baseToggle"
+      class="base-toggle"
+      title="Toggle Base network mode"
+      aria-pressed="false"
+    >
+      <!-- Minimal Base 'Square' mark (blue rounded square) -->
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="4" fill="#0052FF" />
+      </svg>
+    </button>
+
+
     <div class="container">
       <div class="header">
         <svg
@@ -596,6 +669,7 @@
           <div class="sub">Gasless USDC transfers on Ethereum (EIP-3009)</div>
         </div>
       </div>
+
 
       <!-- Wallet -->
       <div class="card">
@@ -677,9 +751,11 @@
         </div>
       </div>
 
+
       <!-- Create -->
       <div id="createSection" class="card" style="display: none">
         <h2 style="margin-bottom: 8px">Create IOU Slip</h2>
+
 
         <div
           class="auth-type-selector"
@@ -708,6 +784,7 @@
           </button>
         </div>
 
+
         <div class="grid">
           <div class="form-group">
             <label for="recipientAddress">Recipient (address or ENS)</label>
@@ -730,6 +807,7 @@
             />
           </div>
         </div>
+
 
         <div class="grid">
           <div class="form-group">
@@ -757,6 +835,7 @@
           </div>
         </div>
 
+
         <div class="row" style="margin-top: 6px">
           <button id="createSlipBtn" class="btn">Create & Sign IOU</button>
           <button
@@ -770,9 +849,11 @@
         <div class="inline-help" id="balanceHint" style="display: none"></div>
       </div>
 
+
       <!-- Upload -->
       <div class="card">
         <h2 style="margin-bottom: 8px">Upload IOU Slip</h2>
+
 
         <!-- Give the area an ID; remove onclick from the container -->
         <div
@@ -793,6 +874,7 @@
           </button>
         </div>
 
+
         <input
           type="file"
           id="fileInput"
@@ -800,6 +882,7 @@
           style="display: none"
         />
       </div>
+
 
       <div style="margin-top: 12px">
         <button id="pasteToggleBtn" class="btn btn-outline">
@@ -826,6 +909,7 @@
         </div>
       </div>
 
+
       <!-- Lists -->
       <div
         id="outgoingSlipsSection"
@@ -836,6 +920,7 @@
         <div id="outgoingSlipsContainer" class="slips-container"></div>
       </div>
 
+
       <div
         id="incomingSlipsSection"
         class="slips-section"
@@ -844,6 +929,7 @@
         <h2>📥 Claimable IOUs (Credits)</h2>
         <div id="incomingSlipsContainer" class="slips-container"></div>
       </div>
+
 
       <div class="footer">
         <p>
@@ -871,6 +957,7 @@
       </div>
     </div>
 
+
     <!-- Status Toast -->
     <div
       id="statusMessage"
@@ -879,11 +966,13 @@
       aria-live="polite"
     ></div>
 
+
     <!-- Intro Popup -->
     <div id="introPopup" class="intro-popup">
       <div class="intro-content">
         <button class="intro-close" onclick="closeIntro()">×</button>
         <h2>📄🪽 Welcome to IOUSDC</h2>
+
 
         <div class="intro-section">
           <h3>🎯 What is this?</h3>
@@ -894,11 +983,12 @@
           </p>
         </div>
 
+
         <div class="intro-section">
           <h3>✨ How it works</h3>
           <div class="intro-steps">
             <div class="intro-step">
-              Connect your wallet (Ethereum Mainnet) and see your USDC balance
+              Connect your wallet (Ethereum or Base) and see your USDC balance
             </div>
             <div class="intro-step">
               Create an IOU by entering recipient and amount
@@ -915,6 +1005,7 @@
           </div>
         </div>
 
+
         <div class="intro-section">
           <h3>🔐 Authorization Types</h3>
           <p>
@@ -927,6 +1018,7 @@
           </p>
         </div>
 
+
         <div
           class="intro-section"
           style="background: #fff3cd; border: 1px solid #ffc107"
@@ -936,6 +1028,7 @@
           <p>• Only the claimer pays gas.</p>
           <p>• Once claimed, an IOU cannot be reused.</p>
         </div>
+
 
         <button
           class="btn"
@@ -947,23 +1040,79 @@
       </div>
     </div>
 
+
     <script>
       // --------------------
       // Constants & ABI
       // --------------------
-      const USDC_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"; // Ethereum mainnet
-      const USDC_DECIMALS = 6;
       const ETHEREUM_MAINNET_CHAIN_ID_HEX = "0x1";
+      const ETHEREUM_CHAIN_ID = 1;
+      const ETHEREUM_USDC_ADDRESS =
+        "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+
+
+      // ENS fallback (mainnet) so resolution works even when connected to Base
+      const ENS_MAINNET_PROVIDER = new ethers.providers.JsonRpcProvider(
+        "https://eth.llamarpc.com"
+      );
+
+
+      // === Base network support (USDC on Base) ===
+      const BASE_CHAIN_ID = 8453;
+      const BASE_CHAIN_ID_HEX = "0x2105";
+      const BASE_USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+      // Provided reference hashes for Base USDC (for sanity checks only)
+      const BASE_DOMAIN_SEPARATOR =
+        "0x02fa7265e7c5d81118673727957699e4d68f74cd74b7db77da710fe8a2c7834f";
+      const BASE_TYPEHASH_TRANSFER =
+        "0x7c7c6cdb67a18743f49ec6fa9b35f50d52ed05cbed4cc592e13b44501c1a2267";
+      const BASE_TYPEHASH_RECEIVE =
+        "0xd099cc98ef71107a616c4f0f941f04c322d8e254fe26b3c6668db87aae413de8";
+
+
+      const USDC_DECIMALS = 6;
       const STORAGE_KEY = "usdcSlips_v3";
 
-      const USDC_EIP712_DOMAIN = Object.freeze({
-        name: "USD Coin",
-        version: "2",
-        chainId: 1, // USDC mainnet domain is ALWAYS 1
-        verifyingContract: USDC_ADDRESS,
-      });
 
-      const domain = USDC_EIP712_DOMAIN;
+      // Two network modes: 'ethereum' (default) and 'base'
+      let networkMode = "ethereum";
+
+
+      // EIP-712 domain builders
+      function buildDomain(chainId, verifyingContract) {
+        return {
+          name: "USD Coin",
+          version: "2",
+          chainId,
+          verifyingContract,
+        };
+      }
+
+
+      function getActiveConfig() {
+        if (networkMode === "base") {
+          return {
+            chainId: BASE_CHAIN_ID,
+            chainIdHex: BASE_CHAIN_ID_HEX,
+            usdcAddress: BASE_USDC_ADDRESS,
+            label: "Base Mainnet",
+            explorerTx: (hash) => `https://basescan.org/tx/${hash}`,
+          };
+        }
+        return {
+          chainId: ETHEREUM_CHAIN_ID,
+          chainIdHex: ETHEREUM_MAINNET_CHAIN_ID_HEX,
+          usdcAddress: ETHEREUM_USDC_ADDRESS,
+          label: "Ethereum Mainnet",
+          explorerTx: (hash) => `https://etherscan.io/tx/${hash}`,
+        };
+      }
+
+
+      // Active domain & address (kept mutable so existing calls keep working)
+      let USDC_ADDRESS = ETHEREUM_USDC_ADDRESS;
+      let domain = buildDomain(ETHEREUM_CHAIN_ID, ETHEREUM_USDC_ADDRESS);
+
 
       const USDC_ABI = [
         "function balanceOf(address owner) view returns (uint256)",
@@ -972,6 +1121,7 @@
         "function cancelAuthorization(address authorizer,bytes32 nonce,uint8 v,bytes32 r,bytes32 s)",
         "function authorizationState(address authorizer,bytes32 nonce) view returns (bool)",
       ];
+
 
       // EIP-712 types (USDC v2)
       const TYPES = {
@@ -997,8 +1147,10 @@
         ],
       };
 
+
       // EIP-712 wrapper for cancel typed data
       const CANCEL_TYPES = { CancelAuthorization: TYPES.CancelAuthorization };
+
 
       // --------------------
       // State
@@ -1007,15 +1159,17 @@
         signer,
         usdc,
         account = null,
-        chainId = 1; // default 1 for domain when offline
+        chainId = ETHEREUM_CHAIN_ID; // will track connected network id
       let slips = []; // local list of uploaded/created slips
       let selectedAuthType = "transfer";
       let isConnecting = false;
+
 
       // --------------------
       // Helpers
       // --------------------
       const $ = (id) => document.getElementById(id);
+
 
       function showStatus(message, type = "info") {
         const statusEl = $("statusMessage");
@@ -1029,6 +1183,7 @@
         );
       }
 
+
       function copyFromEl(inputId) {
         const el = $(inputId);
         el.select();
@@ -1037,9 +1192,11 @@
         showStatus("Copied to clipboard", "success");
       }
 
+
       function shortAddr(addr) {
         return addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "";
       }
+
 
       function clampUSDCDecimals(str) {
         if (!str || isNaN(Number(str))) return null;
@@ -1049,16 +1206,20 @@
           : String(str);
       }
 
+
       function slipLocalId(from, nonce) {
         return `${from.toLowerCase()}_${nonce.toLowerCase()}`;
       }
+
 
       function isExpired(slip) {
         return Math.floor(Date.now() / 1000) > Number(slip.validBefore);
       }
 
+
       function extractSlipFromText(raw) {
         let text = String(raw || "").trim();
+
 
         // Strip code fences like ```json ... ```
         if (text.startsWith("```")) {
@@ -1068,10 +1229,12 @@
             .trim();
         }
 
+
         // First, try as-is
         try {
           return JSON.parse(text);
         } catch {}
+
 
         // Then try to find the first {...} block in messages
         const first = text.indexOf("{");
@@ -1083,15 +1246,18 @@
           } catch {}
         }
 
+
         throw new Error("No valid JSON found");
       }
+
 
       async function addSlipFromText(raw) {
         try {
           const slip = extractSlipFromText(raw);
           validateSlipShape(slip);
 
-          // Optional: off-chain signature sanity (same as file upload)
+
+          // Off-chain signature sanity (try to recover with both domains if needed)
           try {
             const types =
               slip.type === "receive"
@@ -1099,6 +1265,8 @@
                 : {
                     TransferWithAuthorization: TYPES.TransferWithAuthorization,
                   };
+
+
             const message = {
               from: slip.from,
               to: slip.to,
@@ -1108,13 +1276,39 @@
               nonce: slip.nonce,
             };
 
-            const recovered = ethers.utils.verifyTypedData(
-              domain,
-              types,
-              message,
-              slip.signature
-            );
-            if (recovered.toLowerCase() !== slip.from.toLowerCase()) {
+
+            const tryDomains = [];
+            if (slip.chainId === ETHEREUM_CHAIN_ID) {
+              tryDomains.push(
+                buildDomain(ETHEREUM_CHAIN_ID, ETHEREUM_USDC_ADDRESS)
+              );
+            } else if (slip.chainId === BASE_CHAIN_ID) {
+              tryDomains.push(buildDomain(BASE_CHAIN_ID, BASE_USDC_ADDRESS));
+            } else {
+              // Unknown or missing chainId: try both
+              tryDomains.push(
+                buildDomain(ETHEREUM_CHAIN_ID, ETHEREUM_USDC_ADDRESS),
+                buildDomain(BASE_CHAIN_ID, BASE_USDC_ADDRESS)
+              );
+            }
+
+
+            let ok = false;
+            for (const dom of tryDomains) {
+              try {
+                const recovered = ethers.utils.verifyTypedData(
+                  dom,
+                  types,
+                  message,
+                  slip.signature
+                );
+                if (recovered.toLowerCase() === slip.from.toLowerCase()) {
+                  ok = true;
+                  break;
+                }
+              } catch {}
+            }
+            if (!ok) {
               showStatus(
                 "Signature does not match 'from' address (check network/domain).",
                 "error"
@@ -1122,8 +1316,9 @@
               return;
             }
           } catch (_) {
-            /* fine if not connected; domain defaults to mainnet */
+            /* fine if not connected */
           }
+
 
           const id = slipLocalId(slip.from, slip.nonce);
           if (!slips.some((s) => slipLocalId(s.from, s.nonce) === id)) {
@@ -1141,6 +1336,7 @@
         }
       }
 
+
       function isUserRejected(err) {
         const c = err?.code;
         const m = String(err?.message || "").toLowerCase();
@@ -1153,6 +1349,7 @@
           m.includes("rejected")
         );
       }
+
 
       // --------------------
       // Storage (graceful)
@@ -1181,6 +1378,7 @@
         updateBalances();
       }
 
+
       function saveSlips() {
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(slips));
@@ -1189,42 +1387,82 @@
         }
       }
 
+
       // --------------------
-      // Wallet
+      // Network Mode & Wallet
       // --------------------
-      async function ensureMainnet(updateUI = true) {
+      function bindUsdcContract() {
+        if (!provider) return;
+        const runner = signer || provider;
+        usdc = new ethers.Contract(USDC_ADDRESS, USDC_ABI, runner);
+      }
+
+
+      function updateModeUi(onCorrectNetwork) {
+        $("switchBtn").textContent =
+          "Switch to " + (networkMode === "base" ? "Base" : "Mainnet");
+        $("networkPill").style.display = "inline-flex";
+        $("networkPill").textContent = onCorrectNetwork
+          ? networkMode === "base"
+            ? "Base Mainnet"
+            : "Ethereum Mainnet"
+          : `Wrong network (Chain ID ${chainId})`;
+        $("baseToggle").classList.toggle("active", networkMode === "base");
+        $("baseToggle").setAttribute(
+          "aria-pressed",
+          networkMode === "base" ? "true" : "false"
+        );
+      }
+
+
+      function setNetworkMode(mode, { silent = false } = {}) {
+        networkMode = mode === "base" ? "base" : "ethereum";
+        const cfg = getActiveConfig();
+        USDC_ADDRESS = cfg.usdcAddress;
+        domain = buildDomain(cfg.chainId, cfg.usdcAddress);
+        bindUsdcContract();
+        if (!silent) {
+          // If connected, reflect correct/incorrect state
+          if (provider) {
+            ensureCorrectNetwork(true);
+          }
+        }
+      }
+
+
+      async function ensureCorrectNetwork(updateUI = true) {
         try {
           const net = await provider.getNetwork();
           chainId = net.chainId;
-          const onMainnet = chainId === 1;
+          const cfg = getActiveConfig();
+          const onCorrect = chainId === cfg.chainId;
           if (updateUI) {
-            $("switchBtn").style.display = onMainnet ? "none" : "inline-block";
-            $("networkPill").style.display = "inline-flex";
-            $("networkPill").textContent = onMainnet
-              ? "Ethereum Mainnet"
-              : `Wrong network (Chain ID ${chainId})`;
+            $("switchBtn").style.display = onCorrect ? "none" : "inline-block";
+            updateModeUi(onCorrect);
           }
-          return onMainnet;
+          return onCorrect;
         } catch {
           return false;
         }
       }
 
-      async function switchToMainnet() {
+
+      async function switchToCorrectNetwork() {
         try {
           await window.ethereum.request({
             method: "wallet_switchEthereumChain",
-            params: [{ chainId: ETHEREUM_MAINNET_CHAIN_ID_HEX }],
+            params: [{ chainId: getActiveConfig().chainIdHex }],
           });
-          showStatus("Switched to Ethereum Mainnet", "success");
+          showStatus(`Switched to ${getActiveConfig().label}`, "success");
           await postConnectSetup();
         } catch {
           showStatus(
-            "Please switch to Ethereum Mainnet in your wallet",
+            `Please switch to ${getActiveConfig().label} in your wallet`,
             "error"
           );
         }
       }
+
 
       async function connectWallet() {
         if (isConnecting) return;
@@ -1240,6 +1478,7 @@
           }
           provider = new ethers.providers.Web3Provider(window.ethereum, "any");
 
+
           // Request accounts FIRST to avoid "unknown account #0"
           const accounts = await window.ethereum.request({
             method: "eth_requestAccounts",
@@ -1250,12 +1489,26 @@
             return;
           }
 
-          // Bind signer directly to the returned address to avoid the unsupported operation race
+
+          // Bind signer directly to the returned address
           const addr = ethers.utils.getAddress(accounts[0]);
           signer = provider.getSigner(addr);
           account = addr;
-          usdc = new ethers.Contract(USDC_ADDRESS, USDC_ABI, signer);
 
+
+          // Autodetect current chain and align mode (ETH vs Base)
+          try {
+            const net = await provider.getNetwork();
+            chainId = net.chainId;
+            if (chainId === BASE_CHAIN_ID) {
+              setNetworkMode("base", { silent: true });
+            } else {
+              setNetworkMode("ethereum", { silent: true });
+            }
+          } catch {}
+
+
+          bindUsdcContract();
           await postConnectSetup(true);
         } catch (err) {
           console.error(err);
@@ -1265,8 +1518,10 @@
         }
       }
 
+
       async function postConnectSetup(firstConnect = false) {
-        const onMainnet = await ensureMainnet(true);
+        const onCorrect = await ensureCorrectNetwork(true);
+
 
         $("walletAddressText").textContent = shortAddr(account);
         $("walletAddressFull").value = account;
@@ -1275,19 +1530,24 @@
         $("disconnectBtn").style.display = "inline-block";
         $("createSection").style.display = "block";
 
+
         await updateBalance();
         updateBalances();
         renderSlips(); // refresh sticky notes context
 
-        if (!onMainnet) {
+
+        if (!onCorrect) {
           showStatus(
-            "You're not on Ethereum Mainnet. Actions are limited until you switch.",
+            `You're not on ${
+              getActiveConfig().label
+            }. Actions are limited until you switch.`,
             "error"
           );
         } else if (firstConnect) {
           showStatus("Wallet connected successfully!", "success");
         }
       }
+
 
       function disconnectWallet() {
         account = signer = provider = usdc = null;
@@ -1304,6 +1564,7 @@
         renderSlips(); // re-render with neutral sticky notes
         showStatus("Wallet disconnected", "info");
       }
+
 
       async function updateBalance() {
         if (!usdc || !account) return;
@@ -1323,6 +1584,7 @@
         }
       }
 
+
       // Auto-connect silently if already authorized
       async function tryAutoconnect() {
         try {
@@ -1338,11 +1600,24 @@
             const addr = ethers.utils.getAddress(accounts[0]);
             signer = provider.getSigner(addr);
             account = addr;
-            usdc = new ethers.Contract(USDC_ADDRESS, USDC_ABI, signer);
+
+
+            // Align mode with current chain
+            const net = await provider.getNetwork();
+            chainId = net.chainId;
+            if (chainId === BASE_CHAIN_ID) {
+              setNetworkMode("base", { silent: true });
+            } else {
+              setNetworkMode("ethereum", { silent: true });
+            }
+
+
+            bindUsdcContract();
             await postConnectSetup(false);
           }
         } catch {}
       }
+
 
       // --------------------
       // Balances & Lists
@@ -1367,12 +1642,14 @@
           $("debitBalance").style.display = "block";
         } else $("debitBalance").style.display = "none";
 
+
         if (totalCredit > 0) {
           $("creditBalance").textContent = `Credits: +${totalCredit.toFixed(
             2
           )} USDC`;
           $("creditBalance").style.display = "block";
         } else $("creditBalance").style.display = "none";
+
 
         const net = totalCredit - totalDebit;
         if (totalDebit > 0 || totalCredit > 0) {
@@ -1384,6 +1661,7 @@
         } else $("netBalance").style.display = "none";
       }
 
+
       function renderSlips() {
         const outgoingContainer = $("outgoingSlipsContainer");
         const incomingContainer = $("incomingSlipsContainer");
@@ -1391,6 +1669,7 @@
         const incomingSection = $("incomingSlipsSection");
         outgoingContainer.innerHTML = "";
         incomingContainer.innerHTML = "";
+
 
         const outgoing = [],
           incoming = [];
@@ -1404,16 +1683,20 @@
             else incoming.push(slip); // includes recipient case and others
           });
 
+
         outgoingSection.style.display = outgoing.length ? "block" : "none";
         incomingSection.style.display = incoming.length ? "block" : "none";
+
 
         outgoing.forEach((s) => renderSlip(s, outgoingContainer, "outgoing"));
         incoming.forEach((s) => renderSlip(s, incomingContainer, "incoming"));
       }
 
+
       function renderSlip(slip, container, type) {
         const el = document.createElement("div");
         el.className = `slip ${type}`;
+
 
         const validUntil = new Date(
           Number(slip.validBefore) * 1000
@@ -1429,6 +1712,7 @@
           !!account && (slipType === "transfer" ? true : isRecipient);
         const expired = isExpired(slip);
 
+
         // Permission sticky
         let permissionPill = `<span class="pill info">Viewer</span>`;
         if (isOwn)
@@ -1436,9 +1720,11 @@
         else if (isRecipient)
           permissionPill = `<span class="pill green">You are the Recipient</span>`;
 
+
         // Claim button label based on context
         const claimLabel =
           slipType === "receive" ? "Claim" : "Execute Transfer";
+
 
         const debitCreditPill =
           type === "outgoing"
@@ -1449,10 +1735,12 @@
                 2
               )} USDC</span>`;
 
+
         const tag =
           slipType === "receive"
             ? "Receive Authorization"
             : "Transfer Authorization";
+
 
         el.innerHTML = `
           <span class="tag">${tag}</span>
@@ -1523,6 +1811,7 @@
         container.appendChild(el);
       }
 
+
       // --------------------
       // Creating Slips (signing: strict USDC EIP-712)
       // --------------------
@@ -1530,11 +1819,12 @@
         try {
           if (!signer || !provider)
             throw new Error("Connect your wallet first");
-          const onMainnet = await ensureMainnet();
-          if (!onMainnet) {
-            showStatus("Please switch to Ethereum Mainnet", "error");
+          const onCorrect = await ensureCorrectNetwork();
+          if (!onCorrect) {
+            showStatus(`Please switch to ${getActiveConfig().label}`, "error");
             return;
           }
+
 
           const resolved = await normalizeRecipient(
             $("recipientAddress").value,
@@ -1545,6 +1835,7 @@
             return;
           }
           const recipient = resolved.address; // checksummed address
+
 
           let amountStr = clampUSDCDecimals($("amount").value);
           if (!amountStr || Number(amountStr) <= 0) {
@@ -1557,9 +1848,11 @@
             return;
           }
 
+
           const value = ethers.utils.parseUnits(amountStr, USDC_DECIMALS);
           const now = Math.floor(Date.now() / 1000);
           const raw = String($("validAfter").value || "").trim();
+
 
           let validAfter = 0;
           if (raw !== "" && Number(raw) > 0) {
@@ -1576,6 +1869,7 @@
             }
           }
 
+
           const validBefore = now + validDays * 86400;
           if (validBefore <= validAfter) {
             showStatus(
@@ -1585,9 +1879,11 @@
             return;
           }
 
+
           const from = account; // already checksummed
           const nonce = ethers.utils.hexlify(ethers.utils.randomBytes(32));
           const useReceive = selectedAuthType === "receive";
+
 
           const message = {
             from: from, // 0x…
@@ -1601,6 +1897,7 @@
             ? { ReceiveWithAuthorization: TYPES.ReceiveWithAuthorization }
             : { TransferWithAuthorization: TYPES.TransferWithAuthorization };
 
+
           // Pre-flight balance info (not a blocker for EIP-3009)
           try {
             const currentBal = await usdc.balanceOf(from);
@@ -1612,7 +1909,8 @@
             }
           } catch (_) {}
 
-          // Strict EIP-712 signing
+
+          // Strict EIP-712 signing against active domain (ETH or Base)
           let signature;
           try {
             signature = await signer._signTypedData(domain, types, message);
@@ -1625,22 +1923,27 @@
           }
           const { v, r, s } = ethers.utils.splitSignature(signature);
 
+
+          const cfg = getActiveConfig();
+
+
           const slip = {
             type: useReceive ? "receive" : "transfer",
             from,
             to: recipient, // checksummed address
-            value: value.toString(), // BigNumber -> decimal string (base units)
-            validAfter, // keep as number (seconds)
-            validBefore, // keep as number (seconds)
+            value: value.toString(), // base units
+            validAfter, // seconds
+            validBefore, // seconds
             nonce,
             v,
             r,
             s,
-            amount: amountStr, // human amount string (e.g., "100.00")
+            amount: amountStr, // human amount string
             signature,
             created: new Date().toISOString(),
-            chainId,
+            chainId: cfg.chainId,
           };
+
 
           // Store locally (dedupe)
           const id = slipLocalId(from, nonce);
@@ -1650,6 +1953,7 @@
           }
           renderSlips();
           updateBalances();
+
 
           await downloadObjectAsFile(
             slip,
@@ -1662,6 +1966,7 @@
             "success"
           );
 
+
           // Clear form
           $("recipientAddress").value = "";
           $("amount").value = "";
@@ -1673,21 +1978,42 @@
         }
       }
 
+
       async function normalizeRecipient(input, provider) {
         const raw = String(input || "").trim();
         if (!raw) return null;
 
+
         if (ethers.utils.isAddress(raw)) {
-          // Already an address; return its checksum form
           return { address: ethers.utils.getAddress(raw), display: raw };
         }
 
-        // Try ENS resolution
-        const resolved = await provider.resolveName(raw);
-        if (!resolved || !ethers.utils.isAddress(resolved)) return null;
 
+        const isENS = /\.eth$/i.test(raw);
+        let resolved = null;
+
+
+        // 👉 If it's clearly ENS, resolve on mainnet first
+        if (isENS) {
+          try {
+            resolved = await ENS_MAINNET_PROVIDER.resolveName(raw);
+          } catch {}
+        } else {
+          try {
+            resolved = await provider.resolveName(raw);
+          } catch {}
+          if (!resolved) {
+            try {
+              resolved = await ENS_MAINNET_PROVIDER.resolveName(raw);
+            } catch {}
+          }
+        }
+
+
+        if (!resolved || !ethers.utils.isAddress(resolved)) return null;
         return { address: ethers.utils.getAddress(resolved), display: raw };
       }
+
 
       // --------------------
       // Upload / Download / Copy
@@ -1696,7 +2022,9 @@
         // Support both <input type="file"> and drag/drop events
         const file = ev?.target?.files?.[0] || ev?.dataTransfer?.files?.[0];
 
+
         if (!file) return;
+
 
         const reader = new FileReader();
         reader.onload = async (e) => {
@@ -1704,9 +2032,11 @@
             const txt = String(e.target?.result || "");
             const slip = JSON.parse(txt);
 
+
             validateSlipShape(slip);
 
-            // Off-chain signature sanity: recover signer with the USDC EIP-712 domain
+
+            // Off-chain signature sanity: try ETH then Base domains if needed
             try {
               const types =
                 slip.type === "receive"
@@ -1716,7 +2046,7 @@
                         TYPES.TransferWithAuthorization,
                     };
 
-              // Use stringy values to mirror how we signed originally
+
               const message = {
                 from: slip.from,
                 to: slip.to,
@@ -1726,14 +2056,40 @@
                 nonce: slip.nonce,
               };
 
-              const recovered = ethers.utils.verifyTypedData(
-                domain,
-                types,
-                message,
-                slip.signature
-              );
 
-              if (recovered.toLowerCase() !== slip.from.toLowerCase()) {
+              const tryDomains = [];
+              if (slip.chainId === ETHEREUM_CHAIN_ID) {
+                tryDomains.push(
+                  buildDomain(ETHEREUM_CHAIN_ID, ETHEREUM_USDC_ADDRESS)
+                );
+              } else if (slip.chainId === BASE_CHAIN_ID) {
+                tryDomains.push(buildDomain(BASE_CHAIN_ID, BASE_USDC_ADDRESS));
+              } else {
+                tryDomains.push(
+                  buildDomain(ETHEREUM_CHAIN_ID, ETHEREUM_USDC_ADDRESS),
+                  buildDomain(BASE_CHAIN_ID, BASE_USDC_ADDRESS)
+                );
+              }
+
+
+              let ok = false;
+              for (const dom of tryDomains) {
+                try {
+                  const recovered = ethers.utils.verifyTypedData(
+                    dom,
+                    types,
+                    message,
+                    slip.signature
+                  );
+                  if (recovered.toLowerCase() === slip.from.toLowerCase()) {
+                    ok = true;
+                    break;
+                  }
+                } catch {}
+              }
+
+
+              if (!ok) {
                 showStatus(
                   "Signature does not match 'from' address (check network/domain).",
                   "error"
@@ -1741,8 +2097,9 @@
                 return;
               }
             } catch (_) {
-              // Fine if not connected; domain chainId defaults to 1 which is correct for USDC
+              // Fine if not connected
             }
+
 
             const id = slipLocalId(slip.from, slip.nonce);
             if (!slips.some((s) => slipLocalId(s.from, s.nonce) === id)) {
@@ -1750,9 +2107,11 @@
               saveSlips();
             }
 
+
             renderSlips();
             updateBalances();
             showStatus("IOU slip added.", "success");
+
 
             // Clear the <input> value if this came from a file input
             if (ev?.target && "value" in ev.target) ev.target.value = "";
@@ -1765,13 +2124,16 @@
           }
         };
 
+
         reader.readAsText(file);
       }
+
 
       function validateSlipShape(slip) {
         if (!slip || typeof slip !== "object") {
           throw new Error("Invalid slip: expected an object");
         }
+
 
         // Required fields
         const required = [
@@ -1792,6 +2154,7 @@
           }
         }
 
+
         // Normalize & validate addresses (checksum)
         try {
           slip.from = ethers.utils.getAddress(slip.from);
@@ -1804,6 +2167,7 @@
           throw new Error("Invalid to address");
         }
 
+
         // Normalize & validate nonce (bytes32)
         if (typeof slip.nonce !== "string")
           slip.nonce = String(slip.nonce || "");
@@ -1814,6 +2178,7 @@
         } catch {
           throw new Error("Invalid nonce (must be <= 32 bytes hex)");
         }
+
 
         // Normalize & validate r/s (bytes32 each)
         for (const field of ["r", "s"]) {
@@ -1828,6 +2193,7 @@
           }
         }
 
+
         // Normalize & validate v (27/28; accept 0/1 and hex)
         let vNum = Number(slip.v);
         if (!Number.isFinite(vNum)) throw new Error("Invalid v");
@@ -1835,6 +2201,7 @@
         if (vNum !== 27 && vNum !== 28)
           throw new Error("Invalid v (expected 27 or 28)");
         slip.v = vNum;
+
 
         // Normalize value to a base-units decimal string (non-negative integer)
         try {
@@ -1845,6 +2212,7 @@
           throw new Error("Invalid value; expected integer base units");
         }
 
+
         // Normalize times (integers, >= 0). Allow expired/ill-ordered slips; UI handles it.
         const toIntSec = (x, label) => {
           const n = Number(String(x));
@@ -1854,8 +2222,10 @@
         slip.validAfter = toIntSec(slip.validAfter, "validAfter");
         slip.validBefore = toIntSec(slip.validBefore, "validBefore");
 
+
         // Normalize type
         slip.type = slip.type === "receive" ? "receive" : "transfer";
+
 
         // Canonicalize signature to match (v,r,s)
         try {
@@ -1868,8 +2238,18 @@
           throw new Error("Invalid signature fields (v/r/s)");
         }
 
-        return slip; // (optional) since caller mutates in place anyway
+
+        // (Optional) Keep chainId if present; else leave undefined.
+        if (slip.chainId !== undefined) {
+          const cid = Number(slip.chainId);
+          if (Number.isFinite(cid)) slip.chainId = cid;
+          else delete slip.chainId;
+        }
+
+
+        return slip;
       }
+
 
       async function downloadObjectAsFile(obj, filename) {
         const data = JSON.stringify(obj, null, 2);
@@ -1882,6 +2262,7 @@
         URL.revokeObjectURL(url);
       }
 
+
       function downloadSlip(localId) {
         const slip = slips.find(
           (s) => slipLocalId(s.from, s.nonce) === localId
@@ -1892,6 +2273,7 @@
           `usdc-iou-${slip.type}-${Date.now()}.json`
         );
       }
+
 
       function copySlip(localId) {
         const slip = slips.find(
@@ -1913,6 +2295,7 @@
         );
       }
 
+
       function deleteSlip(localId) {
         slips = slips.filter((s) => slipLocalId(s.from, s.nonce) !== localId);
         saveSlips();
@@ -1920,6 +2303,7 @@
         updateBalances();
         showStatus("Removed from local list.", "success");
       }
+
 
       // --------------------
       // Claiming, Status & Revoking
@@ -1932,6 +2316,21 @@
             (s) => slipLocalId(s.from, s.nonce) === localId
           );
           if (!slip) return;
+
+
+          const net = await provider.getNetwork();
+          if (slip.chainId && net.chainId !== slip.chainId) {
+            showStatus(
+              `Please switch to ${
+                slip.chainId === BASE_CHAIN_ID
+                  ? "Base Mainnet"
+                  : "Ethereum Mainnet"
+              } to check this authorization.`,
+              "error"
+            );
+            return;
+          }
+
 
           const used = await usdc.authorizationState(slip.from, slip.nonce);
           if (used) {
@@ -1952,6 +2351,7 @@
         }
       }
 
+
       async function claimSlip(localId) {
         const slip = slips.find(
           (s) => slipLocalId(s.from, s.nonce) === localId
@@ -1959,13 +2359,34 @@
         if (!slip) return;
         try {
           if (!signer) throw new Error("Please connect your wallet");
-          const onMainnet = await ensureMainnet();
-          if (!onMainnet) {
-            showStatus("Please switch to Ethereum Mainnet", "error");
+
+
+          // Ensure we are on the chain the slip was signed for
+          const net = await provider.getNetwork();
+          if (slip.chainId && net.chainId !== slip.chainId) {
+            showStatus(
+              `Please switch to ${
+                slip.chainId === BASE_CHAIN_ID
+                  ? "Base Mainnet"
+                  : "Ethereum Mainnet"
+              } to claim this IOU.`,
+              "error"
+            );
             return;
           }
 
-          const current = account;
+
+          // Also ensure active app mode matches (keeps domain/contract consistent)
+          if (slip.chainId === BASE_CHAIN_ID && networkMode !== "base") {
+            setNetworkMode("base");
+          } else if (
+            slip.chainId === ETHEREUM_CHAIN_ID &&
+            networkMode !== "ethereum"
+          ) {
+            setNetworkMode("ethereum");
+          }
+
+
           const used = await usdc.authorizationState(slip.from, slip.nonce);
           if (used) {
             showStatus("This IOU has already been claimed", "error");
@@ -1977,9 +2398,10 @@
             return;
           }
 
+
           let tx;
           if (slip.type === "receive") {
-            if (current.toLowerCase() !== slip.to.toLowerCase()) {
+            if (account.toLowerCase() !== slip.to.toLowerCase()) {
               showStatus(
                 "Only the designated recipient can claim this IOU.",
                 "error"
@@ -2042,10 +2464,11 @@
           const receipt = await tx.wait();
           deleteSlip(localId);
           await updateBalance();
-          showStatus(
-            `Claimed! View on Etherscan: https://etherscan.io/tx/${receipt.transactionHash}`,
-            "success"
-          );
+          const explorerTx =
+            slip.chainId === BASE_CHAIN_ID
+              ? `https://basescan.org/tx/${receipt.transactionHash}`
+              : `https://etherscan.io/tx/${receipt.transactionHash}`;
+          showStatus(`Claimed! View on explorer: ${explorerTx}`, "success");
         } catch (err) {
           console.error("claimSlip:", err);
           const msg =
@@ -2054,6 +2477,7 @@
             err?.message ||
             "Unknown error";
 
+
           if (
             isUserRejected(err) ||
             /user rejected|transaction was rejected|denied/i.test(msg)
@@ -2061,6 +2485,7 @@
             showStatus("Transaction canceled.", "info");
             return;
           }
+
 
           if (msg.includes("authorization is used")) {
             showStatus("This IOU has already been claimed", "error");
@@ -2078,12 +2503,14 @@
         }
       }
 
+
       function buildCancelMessage(authorizer, nonce) {
         return {
           authorizer: ethers.utils.getAddress(authorizer),
           nonce: ethers.utils.hexZeroPad(nonce, 32),
         };
       }
+
 
       async function revokeSlip(localId) {
         const slip = slips.find(
@@ -2092,11 +2519,22 @@
         if (!slip) return;
         try {
           if (!signer) throw new Error("Connect your wallet first.");
-          const onMainnet = await ensureMainnet();
-          if (!onMainnet) {
-            showStatus("Please switch to Ethereum Mainnet", "error");
+
+
+          // Ensure correct chain for the slip
+          const net = await provider.getNetwork();
+          if (slip.chainId && net.chainId !== slip.chainId) {
+            showStatus(
+              `Please switch to ${
+                slip.chainId === BASE_CHAIN_ID
+                  ? "Base Mainnet"
+                  : "Ethereum Mainnet"
+              } to revoke this authorization.`,
+              "error"
+            );
             return;
           }
+
 
           if (account.toLowerCase() !== slip.from.toLowerCase()) {
             showStatus("Only the authorizer can revoke.", "error");
@@ -2111,6 +2549,7 @@
             showStatus("Already expired; no need to revoke.", "info");
             return;
           }
+
 
           // --- EIP-712 cancel signing ---
           const message = buildCancelMessage(slip.from, slip.nonce);
@@ -2130,14 +2569,12 @@
           }
           const { v, r, s } = ethers.utils.splitSignature(signature);
 
-          // Optional self-check (handy for debugging wallets):
-          // const rec = ethers.utils.verifyTypedData(domain, CANCEL_TYPES, message, signature);
-          // if (rec.toLowerCase() !== slip.from.toLowerCase()) throw new Error("Cancel sig mismatch");
 
           // --- On-chain cancel with the signed (v,r,s) ---
           const est = await usdc.estimateGas
             .cancelAuthorization(message.authorizer, message.nonce, v, r, s)
             .catch(() => ethers.BigNumber.from("80000"));
+
 
           const tx = await usdc.cancelAuthorization(
             message.authorizer,
@@ -2148,12 +2585,18 @@
             { gasLimit: est.mul(120).div(100) }
           );
 
+
           showStatus("Submitting revoke…", "info");
           const receipt = await tx.wait();
 
+
           deleteSlip(localId);
+          const explorerTx =
+            slip.chainId === BASE_CHAIN_ID
+              ? `https://basescan.org/tx/${receipt.transactionHash}`
+              : `https://etherscan.io/tx/${receipt.transactionHash}`;
           showStatus(
-            `Authorization revoked. Etherscan: https://etherscan.io/tx/${receipt.transactionHash}`,
+            `Authorization revoked. Explorer: ${explorerTx}`,
             "success"
           );
         } catch (err) {
@@ -2167,6 +2610,7 @@
           );
         }
       }
+
 
       // --------------------
       // Intro
@@ -2183,6 +2627,7 @@
         $("introPopup").style.display = "flex";
       }
 
+
       // --------------------
       // Event Listeners
       // --------------------
@@ -2196,9 +2641,10 @@
         });
       });
 
+
       $("connectBtn").addEventListener("click", connectWallet);
       $("disconnectBtn").addEventListener("click", disconnectWallet);
-      $("switchBtn").addEventListener("click", switchToMainnet);
+      $("switchBtn").addEventListener("click", switchToCorrectNetwork);
       $("createSlipBtn").addEventListener("click", createSlip);
       $("prefillSelfBtn").addEventListener("click", async () => {
         if (!account) {
@@ -2208,6 +2654,23 @@
         $("recipientAddress").value = account;
       });
       $("fileInput").addEventListener("change", handleFileUpload);
+
+
+      // Toggle Base mode button
+      $("baseToggle").addEventListener("click", async () => {
+        const next = networkMode === "base" ? "ethereum" : "base";
+        setNetworkMode(next);
+        const onCorrect = provider ? await ensureCorrectNetwork(true) : false;
+        if (provider && !onCorrect) {
+          showStatus(
+            `You're in ${getActiveConfig().label} mode. Click "Switch to ${
+              networkMode === "base" ? "Base" : "Mainnet"
+            }" to change networks in your wallet.`,
+            "info"
+          );
+        }
+      });
+
 
       $("pasteToggleBtn").addEventListener("click", () => {
         const p = $("pastePanel");
@@ -2222,13 +2685,16 @@
         $("pasteTextarea").focus();
       });
 
+
       // Drag & drop
       const uploadArea = document.getElementById("uploadArea");
       const browseBtn = document.getElementById("browseBtn");
 
+
       if (browseBtn) {
         browseBtn.addEventListener("click", () => $("fileInput").click());
       }
+
 
       if (uploadArea) {
         // Paste into the area (focus the box or click it; it has tabindex=0)
@@ -2241,6 +2707,7 @@
             addSlipFromText(text);
           }
         });
+
 
         // Drag & drop
         ["dragover", "dragenter"].forEach((ev) =>
@@ -2263,7 +2730,18 @@
         });
       }
 
+
       document.addEventListener("paste", (e) => {
+        const t = e.target;
+        if (
+          t &&
+          (t.tagName === "INPUT" ||
+            t.tagName === "TEXTAREA" ||
+            t.isContentEditable)
+        )
+          return;
+
+
         const area = document.getElementById("uploadArea");
         const panel = document.getElementById("pastePanel");
         const areaVisible = !!area && area.offsetParent !== null;
@@ -2271,9 +2749,11 @@
           !!panel && panel.offsetParent !== null && !panel.hidden;
         if (!areaVisible && !panelVisible) return;
 
+
         const text = (e.clipboardData || window.clipboardData)?.getData("text");
         if (text && text.trim()) addSlipFromText(text);
       });
+
 
       // Wallet events (smoother account/network switching)
       if (window.ethereum) {
@@ -2287,20 +2767,28 @@
             account = addr;
             if (provider) {
               signer = provider.getSigner(addr);
-              usdc = new ethers.Contract(USDC_ADDRESS, USDC_ABI, signer);
             } else {
               provider = new ethers.providers.Web3Provider(
                 window.ethereum,
                 "any"
               );
               signer = provider.getSigner(addr);
-              usdc = new ethers.Contract(USDC_ADDRESS, USDC_ABI, signer);
             }
+            // Align mode with network on account switch
+            const net = await provider.getNetwork();
+            chainId = net.chainId;
+            if (chainId === BASE_CHAIN_ID) {
+              setNetworkMode("base", { silent: true });
+            } else {
+              setNetworkMode("ethereum", { silent: true });
+            }
+            bindUsdcContract();
             await postConnectSetup(false);
           } catch (e) {
             console.error(e);
           }
         });
+
 
         window.ethereum.on?.("chainChanged", async () => {
           try {
@@ -2312,11 +2800,18 @@
               );
             // Refresh signer/usdc with new network context
             if (account) signer = provider.getSigner(account);
-            usdc = new ethers.Contract(
-              USDC_ADDRESS,
-              USDC_ABI,
-              signer || provider
-            );
+
+
+            const net = await provider.getNetwork();
+            chainId = net.chainId;
+            if (chainId === BASE_CHAIN_ID) {
+              setNetworkMode("base", { silent: true });
+            } else {
+              setNetworkMode("ethereum", { silent: true });
+            }
+
+
+            bindUsdcContract();
             await postConnectSetup(false);
           } catch (e) {
             console.error(e);
@@ -2324,12 +2819,30 @@
         });
       }
 
+
       // --------------------
       // Init
       // --------------------
       checkIntroShown();
       loadSlips();
       tryAutoconnect();
+
+
+      // Optional: sanity-check Base domain separator when toggling to Base (dev console only)
+      (function () {
+        try {
+          const baseDom = buildDomain(BASE_CHAIN_ID, BASE_USDC_ADDRESS);
+          const sep = ethers.utils._TypedDataEncoder.hashDomain(baseDom);
+          if (sep.toLowerCase() !== BASE_DOMAIN_SEPARATOR.toLowerCase()) {
+            console.warn(
+              "Base USDC domain separator mismatch. Expected",
+              BASE_DOMAIN_SEPARATOR,
+              "got",
+              sep
+            );
+          }
+        } catch {}
+      })();
     </script>
   </body>
 </html>
