@@ -14,4 +14,29 @@ This basically holds `wstETH` (anyone can tip the pot via `stakeETHForRefund()` 
 
 When anyone relays USDC auths via refunder contract, the contract estimates the gas cost of the relay, and subsidizes the tx by swapping wstETH for ETH via the liquid UniV3 lowest-fee pool.
 
-Roughly 75% of cost is covered this way (but can be fully subsidized after PoC by introducing faucet-like security guards).
+## self-sponsor ("you pay their gas with yield")
+
+Similarly, a variant that allows you to sponsor gas for your payment recipient is deployed to ethereum at the following address: [0xFc6E2C8c4866b5e232b6419E47D650EDf5E7fA8c](https://etherscan.io/address/0xfc6e2c8c4866b5e232b6419e47d650edf5e7fa8c#code)
+
+1) Approve 0xFc6E2C8c4866b5e232b6419E47D650EDf5E7fA8c as spender for your wstETH (you should hold a couple bucks worth)
+
+- [https://etherscan.io/token/0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0#writeContract#F1](https://etherscan.io/token/0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0#writeContract#F1)
+
+2) You, your recipient, or a relayer (anyone) can then process the payment and receive refund. Use the same params as the community pot variant (above) and call:
+
+```solidity
+function payUSDCWithRefund(
+        address from,
+        address to,
+        uint256 value,
+        uint256 validAfter,
+        uint256 validBefore,
+        bytes32 nonce,
+        bytes calldata signature
+    ) public {
+```
+
+And use the params provided by the IOUSDC.eth.limo .txt file relates to slip payments:
+
+
+<img width="660" height="374" alt="Screenshot 2025-10-19 at 3 50 26 PM" src="https://github.com/user-attachments/assets/26378304-c455-49ed-a082-f63ce4bb285d" />
